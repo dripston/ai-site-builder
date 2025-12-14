@@ -27,34 +27,34 @@ export function ChatPanel({ messages, isLoading, onSend, onShowPreview }: ChatPa
         <div className="max-w-3xl mx-auto space-y-6">
           {messages.length === 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex flex-col items-center justify-center py-20 text-center"
+              transition={{ duration: 0.4 }}
+              className="flex flex-col items-center justify-center py-24 text-center"
             >
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-6">
-                <Sparkles className="w-8 h-8 text-primary" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-5">
+                <Sparkles className="w-6 h-6 text-primary" />
               </div>
-              <h2 className="text-2xl font-semibold text-foreground mb-2">
-                What would you like to build?
+              <h2 className="text-xl font-medium text-foreground mb-2">
+                How can I help you today?
               </h2>
-              <p className="text-muted-foreground max-w-md">
-                Describe your website idea and I'll generate a beautiful, production-ready design for you.
+              <p className="text-muted-foreground text-[15px] max-w-sm">
+                Describe your website idea and I'll create it for you.
               </p>
               
-              <div className="mt-8 grid gap-3 w-full max-w-md">
+              <div className="mt-10 grid gap-2.5 w-full max-w-md">
                 {[
-                  'Build a restaurant landing page with menu',
-                  'Create a portfolio for a designer',
-                  'Design a SaaS product landing page',
+                  'Build a restaurant landing page',
+                  'Create a minimal portfolio site',
+                  'Design a SaaS product page',
                 ].map((suggestion, i) => (
                   <motion.button
                     key={suggestion}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1 }}
+                    transition={{ delay: 0.2 + i * 0.08 }}
                     onClick={() => onSend(suggestion)}
-                    className="px-4 py-3 text-left text-sm text-muted-foreground bg-muted/50 hover:bg-muted rounded-xl border border-border hover:border-primary/20 transition-all"
+                    className="px-4 py-3 text-left text-[14px] text-foreground/80 bg-surface-sunken hover:bg-muted rounded-xl border border-transparent hover:border-border transition-all"
                   >
                     {suggestion}
                   </motion.button>

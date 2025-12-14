@@ -22,31 +22,33 @@ export function MessageBubble({ message, onShowPreview }: MessageBubbleProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
       className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}
     >
       {/* Avatar */}
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+        className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${
           isUser
-            ? 'bg-foreground'
+            ? 'bg-foreground/10'
             : 'bg-gradient-to-br from-primary to-primary/80'
         }`}
       >
-        <span className={`text-xs font-medium ${isUser ? 'text-background' : 'text-primary-foreground'}`}>
-          {isUser ? 'You' : 'AI'}
-        </span>
+        {isUser ? (
+          <span className="text-[11px] font-medium text-foreground/70">You</span>
+        ) : (
+          <span className="text-[11px] font-medium text-primary-foreground">AI</span>
+        )}
       </div>
 
       {/* Message Content */}
-      <div className={`flex flex-col gap-2 max-w-[75%] ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={`flex flex-col gap-2 max-w-[70%] ${isUser ? 'items-end' : 'items-start'}`}>
         <div
-          className={`px-4 py-3 rounded-2xl shadow-sm ${
+          className={`px-4 py-2.5 ${
             isUser
-              ? 'bg-chat-user text-chat-user-foreground rounded-tr-md'
-              : 'bg-chat-ai text-chat-ai-foreground rounded-tl-md'
+              ? 'bg-chat-user text-chat-user-foreground rounded-[1.25rem] rounded-tr-lg'
+              : 'bg-transparent text-chat-ai-foreground'
           }`}
         >
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{message.content}</p>

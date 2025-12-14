@@ -25,18 +25,18 @@ export function ChatSidebar({
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ width: isOpen ? 280 : 0, opacity: isOpen ? 1 : 0 }}
+        animate={{ width: isOpen ? 260 : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="h-full bg-sidebar border-r border-sidebar-border flex-shrink-0 overflow-hidden"
       >
-        <div className="flex flex-col h-full w-[280px]">
+        <div className="flex flex-col h-full w-[260px]">
           {/* Header */}
           <div className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-                <span className="text-primary-foreground text-sm font-bold">W</span>
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                <span className="text-primary-foreground text-[11px] font-semibold">W</span>
               </div>
-              <span className="font-semibold text-foreground">WebBuilder</span>
+              <span className="font-medium text-foreground text-[15px]">WebBuilder</span>
             </div>
             <button
               onClick={onToggle}
@@ -47,37 +47,37 @@ export function ChatSidebar({
           </div>
 
           {/* New Chat Button */}
-          <div className="px-3 mb-4">
+          <div className="px-3 mb-3">
             <button
               onClick={onNewChat}
-              className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-sidebar-foreground bg-sidebar-accent hover:bg-sidebar-accent/80 rounded-xl transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-2 text-[14px] font-medium text-sidebar-foreground border border-sidebar-border hover:bg-sidebar-accent rounded-xl transition-colors"
             >
               <Plus className="w-4 h-4" />
-              New Chat
+              New chat
             </button>
           </div>
 
           {/* Chat History */}
           <div className="flex-1 overflow-y-auto px-3 scrollbar-thin">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 mb-2">
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider px-2 mb-2">
               Recent
             </p>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {history.map((chat) => (
                 <motion.button
                   key={chat.id}
-                  whileHover={{ scale: 1.01 }}
+                  whileHover={{ scale: 1.005 }}
                   onClick={() => onSelectChat(chat.id)}
-                  className={`w-full flex items-start gap-2.5 px-3 py-2.5 rounded-xl text-left transition-colors ${
+                  className={`w-full flex items-start gap-2.5 px-3 py-2 rounded-lg text-left transition-colors ${
                     activeId === chat.id
                       ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                       : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
                   }`}
                 >
-                  <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 opacity-60" />
+                  <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 opacity-50" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{chat.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-[13px] font-medium truncate">{chat.title}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
                       {formatDistanceToNow(chat.createdAt, { addSuffix: true })}
                     </p>
                   </div>
