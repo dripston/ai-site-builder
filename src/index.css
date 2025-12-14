@@ -6,102 +6,102 @@
 
 @layer base {
   :root {
-    --background: 210 20% 99%;
-    --foreground: 220 25% 10%;
+    --background: 30 25% 98%;
+    --foreground: 30 10% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card: 30 20% 99%;
+    --card-foreground: 30 10% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover: 30 20% 99%;
+    --popover-foreground: 30 10% 12%;
 
-    --primary: 172 66% 42%;
+    --primary: 24 70% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 20% 25%;
+    --secondary: 30 15% 94%;
+    --secondary-foreground: 30 10% 25%;
 
-    --muted: 210 18% 95%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 30 12% 93%;
+    --muted-foreground: 30 8% 45%;
 
-    --accent: 172 66% 42%;
+    --accent: 24 70% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 55%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 172 66% 42%;
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
+    --ring: 24 70% 55%;
 
-    --radius: 0.625rem;
+    --radius: 1rem;
 
     /* Custom tokens */
-    --chat-user: 172 66% 42%;
+    --chat-user: 24 70% 55%;
     --chat-user-foreground: 0 0% 100%;
-    --chat-ai: 210 25% 97%;
-    --chat-ai-foreground: 220 25% 15%;
-    --surface-elevated: 0 0% 100%;
-    --surface-sunken: 210 25% 98%;
-    --shadow-sm: 0 1px 2px 0 hsl(220 30% 10% / 0.04);
-    --shadow-md: 0 4px 12px -2px hsl(220 30% 10% / 0.06), 0 2px 6px -2px hsl(220 30% 10% / 0.04);
-    --shadow-lg: 0 12px 24px -4px hsl(220 30% 10% / 0.08), 0 4px 8px -4px hsl(220 30% 10% / 0.04);
-    --shadow-glow: 0 0 24px hsl(172 66% 42% / 0.2);
+    --chat-ai: 30 20% 96%;
+    --chat-ai-foreground: 30 10% 15%;
+    --surface-elevated: 30 20% 99%;
+    --surface-sunken: 30 20% 96%;
+    --shadow-sm: 0 1px 2px 0 hsl(30 20% 10% / 0.03);
+    --shadow-md: 0 2px 8px -2px hsl(30 20% 10% / 0.05);
+    --shadow-lg: 0 8px 24px -4px hsl(30 20% 10% / 0.06);
+    --shadow-glow: 0 0 20px hsl(24 70% 55% / 0.15);
 
-    --sidebar-background: 210 25% 98%;
-    --sidebar-foreground: 220 15% 35%;
-    --sidebar-primary: 172 66% 42%;
+    --sidebar-background: 30 20% 97%;
+    --sidebar-foreground: 30 8% 40%;
+    --sidebar-primary: 24 70% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 94%;
-    --sidebar-accent-foreground: 220 25% 20%;
-    --sidebar-border: 210 20% 92%;
-    --sidebar-ring: 172 66% 42%;
+    --sidebar-accent: 30 15% 93%;
+    --sidebar-accent-foreground: 30 10% 20%;
+    --sidebar-border: 30 15% 91%;
+    --sidebar-ring: 24 70% 55%;
   }
 
   .dark {
-    --background: 220 25% 7%;
-    --foreground: 210 15% 95%;
+    --background: 30 15% 8%;
+    --foreground: 30 10% 92%;
 
-    --card: 220 22% 9%;
-    --card-foreground: 210 15% 95%;
+    --card: 30 12% 10%;
+    --card-foreground: 30 10% 92%;
 
-    --popover: 220 22% 9%;
-    --popover-foreground: 210 15% 95%;
+    --popover: 30 12% 10%;
+    --popover-foreground: 30 10% 92%;
 
-    --primary: 172 60% 48%;
+    --primary: 24 65% 58%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 18% 14%;
-    --secondary-foreground: 210 12% 88%;
+    --secondary: 30 10% 15%;
+    --secondary-foreground: 30 8% 85%;
 
-    --muted: 220 18% 14%;
-    --muted-foreground: 210 10% 55%;
+    --muted: 30 10% 15%;
+    --muted-foreground: 30 6% 55%;
 
-    --accent: 172 60% 48%;
+    --accent: 24 65% 58%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 65% 50%;
+    --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 18% 16%;
-    --input: 220 18% 16%;
-    --ring: 172 60% 48%;
+    --border: 30 10% 18%;
+    --input: 30 10% 18%;
+    --ring: 24 65% 58%;
 
-    --chat-user: 172 60% 48%;
+    --chat-user: 24 65% 58%;
     --chat-user-foreground: 0 0% 100%;
-    --chat-ai: 220 20% 11%;
-    --chat-ai-foreground: 210 12% 88%;
-    --surface-elevated: 220 22% 10%;
-    --surface-sunken: 220 25% 6%;
+    --chat-ai: 30 10% 12%;
+    --chat-ai-foreground: 30 8% 88%;
+    --surface-elevated: 30 12% 11%;
+    --surface-sunken: 30 15% 7%;
 
-    --sidebar-background: 220 22% 8%;
-    --sidebar-foreground: 210 12% 65%;
-    --sidebar-primary: 172 60% 48%;
+    --sidebar-background: 30 12% 9%;
+    --sidebar-foreground: 30 6% 60%;
+    --sidebar-primary: 24 65% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 18% 13%;
-    --sidebar-accent-foreground: 210 12% 88%;
-    --sidebar-border: 220 18% 15%;
-    --sidebar-ring: 172 60% 48%;
+    --sidebar-accent: 30 10% 14%;
+    --sidebar-accent-foreground: 30 8% 88%;
+    --sidebar-border: 30 10% 16%;
+    --sidebar-ring: 24 65% 58%;
   }
 }
 

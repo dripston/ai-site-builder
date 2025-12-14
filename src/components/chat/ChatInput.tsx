@@ -34,31 +34,31 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   }, [message]);
 
   return (
-    <div className="border-t border-border bg-surface-elevated p-4">
+    <div className="border-t border-border/50 bg-background p-4">
       <div className="max-w-3xl mx-auto">
-        <div className="relative flex items-end gap-3 bg-background border border-border rounded-2xl px-4 py-3 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all">
+        <div className="relative flex items-end gap-2 bg-surface-sunken border border-border rounded-2xl px-4 py-3 focus-within:border-primary/40 transition-colors">
           <textarea
             ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Describe the website you want to build..."
+            placeholder="Message WebBuilder..."
             disabled={disabled}
             rows={1}
-            className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground resize-none outline-none text-[15px] leading-relaxed max-h-[200px] scrollbar-thin"
+            className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground/60 resize-none outline-none text-[15px] leading-relaxed max-h-[200px] scrollbar-thin"
           />
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={handleSubmit}
             disabled={!message.trim() || disabled}
-            className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary text-primary-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-opacity shadow-glow"
+            className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary text-primary-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
           >
             <Send className="w-4 h-4" />
           </motion.button>
         </div>
-        <p className="text-xs text-muted-foreground text-center mt-3">
-          Press Enter to send, Shift + Enter for new line
+        <p className="text-xs text-muted-foreground/60 text-center mt-2.5">
+          WebBuilder can make mistakes. Check important info.
         </p>
       </div>
     </div>
