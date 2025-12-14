@@ -1,14 +1,93 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useCallback } from 'react';
+import { Message } from '@/types/chat';
+import { ChatPanel } from '@/components/chat/ChatPanel';
+import { PreviewPanel } from '@/components/preview/PreviewPanel';
+import { ChatSidebar } from '@/components/sidebar/ChatSidebar';
+import { chatHistoryMock, getRandomMockResponse } from '@/lib/mockData';
 
-const Index = () => {
+export default function Index() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeChatId, setActiveChatId] = useState<string | undefined>();
+
+  const handleSendMessage = useCallback(async (content: string) => {
+    // Add user message
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    // Simulate AI response delay
+    await new Promise((resolve) => setTimeout(resolve, 1500 + Math.random() * 1000));
+
+    // Get mock response
+    const mockResponse = getRandomMockResponse();
+    const aiMessage: Message = {
+      id: `ai-${Date.now()}`,
+      role: 'assistant',
+      content: mockResponse.message,
+      htmlCode: mockResponse.html,
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, aiMessage]);
+    setIsLoading(false);
+  }, []);
+
+  const handleShowPreview = useCallback((htmlCode: string) => {
+    setPreviewHtml(htmlCode);
+  }, []);
+
+  const handleClosePreview = useCallback(() => {
+    setPreviewHtml(null);
+  }, []);
+
+  const handleNewChat = useCallback(() => {
+    setMessages([]);
+    setPreviewHtml(null);
+    setActiveChatId(undefined);
+  }, []);
+
+  const handleSelectChat = useCallback((id: string) => {
+    setActiveChatId(id);
+    // In real app, load chat history here
+    setMessages([]);
+    setPreviewHtml(null);
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="h-screen flex bg-background overflow-hidden">
+      {/* Sidebar */}
+      <ChatSidebar
+        history={chatHistoryMock}
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        onNewChat={handleNewChat}
+        onSelectChat={handleSelectChat}
+        activeId={activeChatId}
+      />
+
+      {/* Main Chat Area */}
+      <main
+        className="flex-1 flex flex-col min-w-0 transition-all duration-300"
+        style={{ marginRight: previewHtml ? '55%' : 0 }}
+      >
+        <ChatPanel
+          messages={messages}
+          isLoading={isLoading}
+          onSend={handleSendMessage}
+          onShowPreview={handleShowPreview}
+        />
+      </main>
+
+      {/* Preview Panel */}
+      <PreviewPanel htmlCode={previewHtml} onClose={handleClosePreview} />
     </div>
   );
-};
-
-export default Index;
+}
