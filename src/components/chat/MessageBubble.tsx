@@ -1,29 +1,27 @@
 import { useState } from 'react';
-import { CheckCircle, Copy, Eye, Github, ExternalLink, Sparkles, User } from 'lucide-react';
+import { CheckCircle, Copy, Eye, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { hostHtmlOnNgrok, pushHtmlToGithub } from '@/lib/utils';
 import { Message } from '@/types/chat';
-import { motion } from 'framer-motion';
 
 interface MessageBubbleProps {
   message: Message;
-  onShowPreview?: () => void;
+  isLatest: boolean;
 }
 
-export function MessageBubble({ message, onShowPreview }: MessageBubbleProps) {
+export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   const [copied, setCopied] = useState(false);
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [hosting, setHosting] = useState(false);
   const [hostedUrl, setHostedUrl] = useState<string | null>(null);
   const [hostError, setHostError] = useState<string | null>(null);
   
+  // GitHub states
   const [pushingToGithub, setPushingToGithub] = useState(false);
   const [githubRepoUrl, setGithubRepoUrl] = useState<string | null>(null);
   const [githubError, setGithubError] = useState<string | null>(null);
   const [showGithubInput, setShowGithubInput] = useState(false);
   const [repoName, setRepoName] = useState('');
-
-  const isUser = message.role === 'user';
 
   const handleCopy = () => {
     if (message.htmlCode) {
@@ -36,7 +34,6 @@ export function MessageBubble({ message, onShowPreview }: MessageBubbleProps) {
   const handleViewPreview = () => {
     if (message.htmlCode) {
       setPreviewHtml(message.htmlCode);
-      onShowPreview?.();
     }
   };
 
@@ -50,8 +47,8 @@ export function MessageBubble({ message, onShowPreview }: MessageBubbleProps) {
       const url = await hostHtmlOnNgrok(message.htmlCode);
       setHostedUrl(url);
     } catch (error) {
-      setHostError('Failed to host. Make sure the server is running.');
-      console.error('Error hosting:', error);
+      setHostError('Failed to host on ngrok. Make sure the server is running.');
+      console.error('Error hosting on ngrok:', error);
     } finally {
       setHosting(false);
     }
@@ -60,10 +57,16 @@ export function MessageBubble({ message, onShowPreview }: MessageBubbleProps) {
   const handlePushToGithub = async () => {
     if (!message.htmlCode) return;
     
+    // Get the GitHub token from environment variable
     const githubToken = import.meta.env.VITE_GITHUB_TOKEN;
     
     if (!githubToken) {
       setGithubError('GitHub token not found. Please add VITE_GITHUB_TOKEN to your .env file.');
+      return;
+    }
+    
+    if (!repoName.trim()) {
+      setGithubError('Please enter a repository name.');
       return;
     }
     
@@ -75,7 +78,8 @@ export function MessageBubble({ message, onShowPreview }: MessageBubbleProps) {
       setGithubRepoUrl(url);
       setShowGithubInput(false);
     } catch (error) {
-      setGithubError('Failed to push to GitHub.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to push to GitHub. Please check the console for details.';
+      setGithubError(errorMessage);
       console.error('Error pushing to GitHub:', error);
     } finally {
       setPushingToGithub(false);
@@ -83,184 +87,137 @@ export function MessageBubble({ message, onShowPreview }: MessageBubbleProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
-      data-testid={`message-${message.id}`}
-    >
-      <div className={`flex-shrink-0 ${isUser ? 'ml-2' : 'mr-2'}`}>
-        {isUser ? (
-          <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-            <User className="w-4 h-4 text-muted-foreground" />
-          </div>
-        ) : (
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-        )}
-      </div>
-
-      <div className={`flex flex-col gap-2 max-w-[80%] ${isUser ? 'items-end' : 'items-start'}`}>
-        <div
-          className={`rounded-2xl px-4 py-3 ${
-            isUser
-              ? 'bg-gradient-to-r from-primary to-purple-500 text-white rounded-tr-md'
-              : 'bg-muted text-foreground rounded-tl-md'
-          }`}
-        >
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-        </div>
+    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
+      <div className={`max-w-[80%] rounded-lg p-4 ${message.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}>
+        <p className="whitespace-pre-wrap">{message.content}</p>
         
         {message.htmlCode && (
-          <div className="flex flex-col gap-2 w-full">
-            <div className="flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleCopy}
+              className={message.role === 'user' ? 'text-blue-500 border-blue-500 hover:bg-blue-50' : ''}
+            >
+              {copied ? <CheckCircle className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
+              {copied ? 'Copied!' : 'Copy HTML'}
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleViewPreview}
+              className={message.role === 'user' ? 'text-blue-500 border-blue-500 hover:bg-blue-50' : ''}
+            >
+              <Eye className="w-4 h-4 mr-1" />
+              View Preview
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleHostOnNgrok}
+              disabled={hosting}
+              className={message.role === 'user' ? 'text-blue-500 border-blue-500 hover:bg-blue-50' : ''}
+            >
+              {hosting ? 'Hosting...' : 'Host on Ngrok'}
+            </Button>
+            
+            {!showGithubInput && !githubRepoUrl && (
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={handleCopy}
-                className="text-xs"
-                data-testid="button-copy-html"
+                onClick={() => setShowGithubInput(true)}
+                className={message.role === 'user' ? 'text-blue-500 border-blue-500 hover:bg-blue-50' : ''}
               >
-                {copied ? <CheckCircle className="w-3.5 h-3.5 mr-1.5" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
-                {copied ? 'Copied!' : 'Copy Code'}
+                <Github className="w-4 h-4 mr-1" />
+                Push to GitHub
               </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleViewPreview}
-                className="text-xs"
-                data-testid="button-view-preview"
-              >
-                <Eye className="w-3.5 h-3.5 mr-1.5" />
-                Preview
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleHostOnNgrok}
-                disabled={hosting}
-                className="text-xs"
-                data-testid="button-host"
-              >
-                <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
-                {hosting ? 'Deploying...' : 'Deploy'}
-              </Button>
-              
-              {!showGithubInput && !githubRepoUrl && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setShowGithubInput(true)}
-                  className="text-xs"
-                  data-testid="button-github"
-                >
-                  <Github className="w-3.5 h-3.5 mr-1.5" />
-                  GitHub
-                </Button>
-              )}
-            </div>
+            )}
             
             {showGithubInput && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="flex flex-col gap-2 p-3 bg-muted rounded-lg"
-              >
+              <div className="flex flex-col gap-2 w-full mt-2">
                 <input
                   type="text"
-                  placeholder="Repository name"
+                  placeholder="Enter repository name"
                   value={repoName}
                   onChange={(e) => setRepoName(e.target.value)}
-                  className="px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  data-testid="input-repo-name"
+                  className="px-2 py-1 border rounded text-black"
                 />
                 <div className="flex gap-2">
                   <Button 
+                    variant="outline" 
                     size="sm" 
                     onClick={handlePushToGithub}
                     disabled={pushingToGithub || !repoName.trim()}
-                    className="text-xs"
-                    data-testid="button-push-github"
+                    className={message.role === 'user' ? 'text-blue-500 border-blue-500 hover:bg-blue-50' : ''}
                   >
-                    {pushingToGithub ? 'Pushing...' : 'Push'}
+                    {pushingToGithub ? 'Pushing...' : 'Push to GitHub'}
                   </Button>
                   <Button 
-                    variant="ghost" 
+                    variant="outline" 
                     size="sm" 
                     onClick={() => setShowGithubInput(false)}
-                    className="text-xs"
-                    data-testid="button-cancel-github"
+                    className={message.role === 'user' ? 'text-blue-500 border-blue-500 hover:bg-blue-50' : ''}
                   >
                     Cancel
                   </Button>
                 </div>
-              </motion.div>
+              </div>
             )}
             
             {hostedUrl && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400"
-              >
-                <CheckCircle className="w-3.5 h-3.5" />
+              <div className="mt-2 text-sm">
+                <p>Successfully hosted!</p>
                 <a 
                   href={hostedUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="underline hover:no-underline"
-                  data-testid="link-hosted-url"
+                  className={`underline ${message.role === 'user' ? 'text-blue-200' : 'text-blue-600'}`}
                 >
                   {hostedUrl}
                 </a>
-              </motion.div>
+              </div>
             )}
             
             {githubRepoUrl && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400"
-              >
-                <CheckCircle className="w-3.5 h-3.5" />
+              <div className="mt-2 text-sm">
+                <p>Successfully pushed to GitHub!</p>
                 <a 
                   href={githubRepoUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="underline hover:no-underline"
-                  data-testid="link-github-url"
+                  className={`underline ${message.role === 'user' ? 'text-blue-200' : 'text-blue-600'}`}
                 >
-                  View on GitHub
+                  {githubRepoUrl}
                 </a>
-              </motion.div>
+              </div>
             )}
             
-            {(hostError || githubError) && (
-              <p className="text-xs text-destructive" data-testid="text-error">
-                {hostError || githubError}
-              </p>
+            {hostError && (
+              <div className="mt-2 text-sm text-red-500">
+                {hostError}
+              </div>
+            )}
+            
+            {githubError && (
+              <div className="mt-2 text-sm text-red-500">
+                {githubError}
+              </div>
             )}
           </div>
         )}
         
         {previewHtml && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full mt-2 border border-border rounded-xl overflow-hidden shadow-md"
-          >
+          <div className="mt-4 border rounded-lg overflow-hidden">
             <iframe 
               srcDoc={previewHtml} 
-              className="w-full h-72 bg-white"
+              className="w-full h-64"
               title="HTML Preview"
             />
-          </motion.div>
+          </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

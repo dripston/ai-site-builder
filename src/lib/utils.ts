@@ -67,6 +67,14 @@ export async function pushHtmlToGithub(
   githubToken: string
 ): Promise<string> {
   try {
+    // Validate repository name
+    if (!repoName || repoName.trim() === '') {
+      throw new Error('Repository name is required');
+    }
+
+    // Sanitize repository name (only alphanumeric, hyphens, and underscores)
+    const sanitizedRepoName = repoName.trim().replace(/[^a-zA-Z0-9-_]/g, '-');
+    
     // Create a new repository
     const repoResponse = await fetch('https://api.github.com/user/repos', {
       method: 'POST',
@@ -76,7 +84,7 @@ export async function pushHtmlToGithub(
         'Accept': 'application/vnd.github.v3+json',
       },
       body: JSON.stringify({
-        name: repoName,
+        name: sanitizedRepoName,
         description: 'Website generated with AI Site Builder',
         auto_init: false, // We'll initialize with our HTML file
         private: false, // Public repository
@@ -84,13 +92,31 @@ export async function pushHtmlToGithub(
     });
 
     if (!repoResponse.ok) {
-      const errorData = await repoResponse.json();
-      throw new Error(`Failed to create repository: ${errorData.message || repoResponse.statusText}`);
+      const errorText = await repoResponse.text();
+      let errorMessage = `Failed to create repository: ${repoResponse.statusText}`;
+      
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.message) {
+          errorMessage = `Failed to create repository: ${errorData.message}`;
+        }
+      } catch (e) {
+        // If we can't parse the error as JSON, use the raw text
+        errorMessage = `Failed to create repository: ${errorText}`;
+      }
+      
+      throw new Error(errorMessage);
     }
 
     const repoData = await repoResponse.json();
     const repoFullName = repoData.full_name;
     const repoUrl = repoData.html_url;
+
+    // Encode HTML content to base64 (handling Unicode characters)
+    const encoder = new TextEncoder();
+    const data = encoder.encode(htmlContent);
+    const binary = String.fromCharCode(...data);
+    const base64Content = btoa(binary);
 
     // Create the HTML file in the repository
     const fileResponse = await fetch(`https://api.github.com/repos/${repoFullName}/contents/index.html`, {
@@ -102,14 +128,26 @@ export async function pushHtmlToGithub(
       },
       body: JSON.stringify({
         message: 'Initial commit: Add generated website',
-        content: btoa(htmlContent), // Encode HTML as base64
+        content: base64Content, // Encode HTML as base64
         branch: 'main',
       }),
     });
 
     if (!fileResponse.ok) {
-      const errorData = await fileResponse.json();
-      throw new Error(`Failed to push file to repository: ${errorData.message || fileResponse.statusText}`);
+      const errorText = await fileResponse.text();
+      let errorMessage = `Failed to push file to repository: ${fileResponse.statusText}`;
+      
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.message) {
+          errorMessage = `Failed to push file to repository: ${errorData.message}`;
+        }
+      } catch (e) {
+        // If we can't parse the error as JSON, use the raw text
+        errorMessage = `Failed to push file to repository: ${errorText}`;
+      }
+      
+      throw new Error(errorMessage);
     }
 
     return repoUrl;
